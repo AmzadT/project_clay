@@ -16,6 +16,7 @@ const DynamicForm = ({ schema, onSubmit }) => {
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const validate = () => {
     let valid = true;
@@ -41,6 +42,12 @@ const DynamicForm = ({ schema, onSubmit }) => {
     };
 
     traverseSchema(schema);
+
+    if (!termsAccepted) {
+      newErrors.terms = "You must accept the Terms & Conditions";
+      valid = false;
+    }
+
     setErrors(newErrors);
     return valid;
   };
@@ -164,7 +171,22 @@ const DynamicForm = ({ schema, onSubmit }) => {
           )}
         </div>
       ))}
-      <br />
+
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={termsAccepted}
+            onChange={(e) => setTermsAccepted(e.target.checked)}
+          />
+        }
+        label="I agree to the Terms & Conditions"
+      />
+      {errors.terms && (
+        <Typography color="error" className="text-red-600">
+          {errors.terms}
+        </Typography>
+      )}
+
       <Button
         type="submit"
         variant="contained"
